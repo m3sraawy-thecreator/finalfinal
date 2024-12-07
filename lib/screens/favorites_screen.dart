@@ -1,43 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../cubits/app_cubit.dart';
-import '../models/person_model.dart';
-import 'information_screen.dart';
 
 class FavoritesScreen extends StatelessWidget {
+  final List<Map<String, dynamic>> favoritePersons;
+
+  const FavoritesScreen({Key? key, required this.favoritePersons}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final cubit = BlocProvider.of<AppCubit>(context);
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favorites'),
+        title: const Text('My Favorites'),
       ),
-      body: cubit.favorites.isEmpty
-          ? Center(
+      body: favoritePersons.isEmpty
+          ? const Center(
         child: Text(
-          'No favorites added yet.',
+          'No favorites added!',
           style: TextStyle(fontSize: 18),
         ),
       )
           : ListView.builder(
-        itemCount: cubit.favorites.length,
+        itemCount: favoritePersons.length,
         itemBuilder: (context, index) {
-          final PersonModel person = cubit.favorites[index];
+          final person = favoritePersons[index];
+
           return ListTile(
             leading: CircleAvatar(
-              backgroundImage: NetworkImage(
-                  'https://image.tmdb.org/t/p/w200/${person.profilePath}'),
+              backgroundImage: person['profile_path'] != null
+                  ? NetworkImage(
+                  'https://image.tmdb.org/t/p/w200${person['profile_path']}')
+                  : null,
+              child: person['profile_path'] == null
+                  ? const Icon(Icons.person)
+                  : null,
             ),
-            title: Text(person.name),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => InformationScreen(person.id),
-                ),
-              );
-            },
+            title: Text(person['name'] ?? 'Unknown'),
           );
         },
       ),

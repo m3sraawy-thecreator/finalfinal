@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:insta_image_viewer/insta_image_viewer.dart';
-// import 'package:image_downloader/image_downloader.dart';
 
-class ImageViewerScreen extends StatelessWidget {
-  final String imagePath;
+class ImageScreen extends StatelessWidget {
+  final String imageUrl;
 
-  const ImageViewerScreen(this.imagePath, {super.key});
+  const ImageScreen({Key? key, required this.imageUrl}) : super(key: key);
 
-  Future<void> downloadImage(String url) async {
+  Future<void> downloadImage() async {
     try {
-      // await ImageDownloader.downloadImage(url);
-    } catch (error) {
-      print('Error downloading image: $error');
+    } catch (e) {
+      print('Error downloading image: $e');
     }
   }
 
@@ -23,22 +21,13 @@ class ImageViewerScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.download),
-            onPressed: () {
-              final imageUrl = 'https://image.tmdb.org/t/p/w500/$imagePath';
-              downloadImage(imageUrl);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Downloading image...')),
-              );
-            },
+            onPressed: downloadImage,
           ),
         ],
       ),
       body: Center(
         child: InstaImageViewer(
-          child: Image.network(
-            'https://image.tmdb.org/t/p/w500/$imagePath',
-            fit: BoxFit.contain,
-          ),
+          child: Image.network(imageUrl, fit: BoxFit.contain),
         ),
       ),
     );
